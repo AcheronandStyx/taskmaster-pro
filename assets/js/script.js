@@ -80,16 +80,18 @@ $(".card .list-group").sortable({
   tolerance: "pointer",
   helper: "clone", // tells jQuery to create a copy of the dragged element and move the copy instead of the original prevent click events from accidentally triggering on the original element
   activate: function (event) {
-    console.log("activate", this);
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
   deactivate: function (event) {
-    console.log("deactivate", this);
+    $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   over: function (event) {
-    console.log("over", event.target);
+    $(event.target).addClass("dropover-active");
   },
   out: function (event) {
-    console.log("out", event.target);
+    $(event.target).removeClass("dropover-active");
   },
   update: function (event) {
     // array to store the task data in
@@ -123,9 +125,6 @@ $(".card .list-group").sortable({
     // update array on tasks object and save
     tasks[arrName] = tempArr;
     saveTasks();
-  },
-  stop: function (event) {
-    $(this).removeClass("dropover");
   }
 });
 
@@ -292,6 +291,11 @@ $("#modalDueDate").datepicker({
   }
 });
 
+setInterval(function () {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, (100 * 60) * 30 ); // math to parse out 30 minutes in miliseconds in a readbale fromat
 // load tasks for the first time
 loadTasks();
 
